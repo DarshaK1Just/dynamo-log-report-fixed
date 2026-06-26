@@ -1,19 +1,25 @@
+artifacts = ["/app/report.json"]
+
 [task]
 name = "dynamo/log-report"
 description = "Parse an Apache-style access log into a small JSON summary report."
-artifacts = ["/app/report.json"]
 
 [metadata]
+# --- Pre-seeded — DO NOT EDIT ---
 category = "data_processing_and_etl"
 subcategory = "text_processing"
+
+# --- Fixed for this dataset — leave as-is ---
+model_tested = "GPT-5.4"
+agent_tested = "Terminus-2"
+
+# --- Fellow-set ---
 task_objective = ["transform", "generate"]
 artifact_type = ["text_or_log_file", "generated_output_artifact"]
 expert_time_estimate_hours = 0.3
-model_tested = "claude-sonnet-4-6"
-agent_tested = "claude-sonnet-4-6"
-difficulty_explanation = "Parse a small access log and emit summary stats."
-solution_explanation = "Read the log, count requests/unique IPs, find the top path."
-verification_explanation = "Load report.json and assert total_requests, unique_ips, and top_path match expected values derived from the log."
+difficulty_explanation = "The pipeline runs without errors and emits plausible-looking numbers either way; the only signal of incorrectness is knowing what the values should mean."
+solution_explanation = "Read the log line by line, count non-blank lines for total_requests, collect unique first-field tokens for unique_ips, extract the path from the quoted request field and count with a Counter for top_path."
+verification_explanation = "Load /app/report.json and assert total_requests==6, unique_ips==3, top_path=='/index.html' by exact match; assert no extra top-level keys."
 
 [verifier]
 timeout_sec = 120.0
@@ -27,5 +33,5 @@ cpus = 1
 memory_mb = 2048
 storage_mb = 10240
 gpus = 0
-allow_internet = false
+allow_internet = true
 mcp_servers = []
